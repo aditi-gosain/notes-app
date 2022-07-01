@@ -1,3 +1,4 @@
+require("dotenv").config();
 const express = require("express");
 const bodyParser = require("body-parser");
 const mongoose = require("mongoose");
@@ -10,7 +11,7 @@ app.set('view engine', 'ejs');
 app.use(bodyParser.urlencoded({extended: true}));
 app.use(express.static("public"));
 
-mongoose.connect("mongodb+srv://aditigosain:googleplus@cluster0.rtf8u.mongodb.net/todolistDB", {useNewUrlParser: true});
+mongoose.connect("mongodb+srv://process.env.MONGODB_USERNAME:process.env.MONGODB_PASSWORD@cluster0.rtf8u.mongodb.net/todolistDB", {useNewUrlParser: true});
 
 const itemsSchema = {
   name: String
@@ -67,7 +68,6 @@ app.get("/:customListName", function(req, res){
   List.findOne({name: customListName}, function(err, foundList){
     if (!err){
       if (!foundList){
-        //Create a new list
         const list = new List({
           name: customListName,
           items: defaultItems
@@ -75,7 +75,6 @@ app.get("/:customListName", function(req, res){
         list.save();
         res.redirect("/" + customListName);
       } else {
-        //Show an existing list
 
         res.render("list", {listTitle: foundList.name, newListItems: foundList.items});
       }
